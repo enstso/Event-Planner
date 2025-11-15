@@ -1,0 +1,32 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@example.com",
+      "password": "Admin123!",
+      "firstName": "Admin",
+      "lastName": "User",
+      "role": "ADMIN"
+    }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "title": "Angular Workshop",
+      "description": "Learn Angular basics and architecture.",
+      "location": "Online",
+      "startDate": "2025-12-01T09:00:00.000Z",
+      "endDate": "2025-12-01T12:00:00.000Z",
+      "capacity": 50,
+      "organizerId": 1
+    }
+  ],
+  "registrations": [
+    {
+      "id": 1,
+      "userId": 1,
+      "eventId": 1,
+      "createdAt": "2025-11-14T10:00:00.000Z"
+    }
+  ]
+}
