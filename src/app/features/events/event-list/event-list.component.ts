@@ -8,6 +8,7 @@ import {NgForOf, NgIf} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import {forkJoin} from 'rxjs';
 import {Registration} from '../../../core/models/registration.model';
+import {UserRole} from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-event-list',
@@ -23,7 +24,7 @@ export class EventListComponent implements OnInit {
   events: Event[] = [];
   isLoading = false;
   errorMessage: string | null = null;
-  userRole: string | null = null;
+  userRole: UserRole | null = null;
   private registrationsCountByEventId: Record<number, number> = {};
   private registeredEventIds: Set<number> = new Set<number>();
 
@@ -51,9 +52,7 @@ export class EventListComponent implements OnInit {
         }
 
         const observables = events.map((event: Event) =>
-          this.eventsService
-            .getRegistrationsByEvent(event.id)
-            .pipe()
+          this.eventsService.getRegistrationsByEvent(event.id)
         );
 
         forkJoin(observables).subscribe({
@@ -69,6 +68,7 @@ export class EventListComponent implements OnInit {
               this.isLoading = false;
               return;
             }
+
             this.eventsService.getRegistrationsByUser(userId).subscribe({
               next: (regs: Registration[]): void => {
                 this.registeredEventIds = new Set<number>(
@@ -78,23 +78,23 @@ export class EventListComponent implements OnInit {
               },
               error: (): void => {
                 this.isLoading = false;
-                this.errorMessage = 'Could not load your registrations.';
+                this.showError('Could not load your registrations.');
               }
             });
-            this.isLoading = false;
           },
           error: (): void => {
             this.isLoading = false;
-            this.errorMessage = 'Could not load registrations.';
+            this.showError('Could not load registrations.');
           }
         });
       },
       error: () => {
         this.isLoading = false;
-        this.errorMessage = 'Could not load events.';
+        this.showError('Could not load events.');
       }
     });
   }
+
 
   async onClickDetail(eventId: number): Promise<void> {
    await this.router.navigate(['/events', eventId]);

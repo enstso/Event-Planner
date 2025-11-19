@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { RegisterDto } from '../../../core/dto/auth.dto';
 import { passwordMatchValidator } from '../validators/password-match.validator';
-import {Router, RouterLink} from '@angular/router';
-import {NgIf} from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-register',
@@ -17,6 +17,8 @@ import {NgIf} from '@angular/common';
 })
 export class RegisterComponent {
   readonly registerForm: FormGroup;
+  errorMessage: string | null = null;
+  isSubmitting = false;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -43,8 +45,20 @@ export class RegisterComponent {
       return;
     }
 
+    this.isSubmitting = true;
+    this.errorMessage = null;
+
     const dto: RegisterDto = this.registerForm.value as RegisterDto;
-    this.authService.register(dto).subscribe();
-    this.router.navigate(['/auth/login']).then(r => {});
+
+    this.authService.register(dto).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        void this.router.navigate(['/auth/login']);
+      },
+      error: () => {
+        this.isSubmitting = false;
+        this.errorMessage = 'An error occurred during registration.';
+      }
+    });
   }
 }

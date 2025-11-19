@@ -7,12 +7,15 @@
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="grid gap-4 md:grid-cols-2">
       <!-- Email -->
       <div class="md:col-span-2">
-        <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-        <input
-          type="email"
-          formControlName="email"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+        <label class="block text-sm font-medium text-slate-700 mb-1">
+          Email
+          <input
+            type="email"
+            formControlName="email"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </label>
+
         <div
           *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
           class="text-xs text-red-500 mt-1"
@@ -25,48 +28,66 @@
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">
           First name
+          <input
+            type="text"
+            formControlName="firstName"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
         </label>
-        <input
-          type="text"
-          formControlName="firstName"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+        <div
+          *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched"
+          class="text-xs text-red-500 mt-1"
+        >
+          First name must be at least 2 characters.
+        </div>
       </div>
 
       <!-- Last name -->
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">
           Last name
+          <input
+            type="text"
+            formControlName="lastName"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
         </label>
-        <input
-          type="text"
-          formControlName="lastName"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+        <div
+          *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched"
+          class="text-xs text-red-500 mt-1"
+        >
+          Last name must be at least 2 characters.
+        </div>
       </div>
 
       <!-- Password -->
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">
           Password
+          <input
+            type="password"
+            formControlName="password"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
         </label>
-        <input
-          type="password"
-          formControlName="password"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
+        <div
+          *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+          class="text-xs text-red-500 mt-1"
+        >
+          Password must be at least 6 characters.
+        </div>
       </div>
 
       <!-- Confirm password -->
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">
           Confirm password
+          <input
+            type="password"
+            formControlName="confirmPassword"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
         </label>
-        <input
-          type="password"
-          formControlName="confirmPassword"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
       </div>
 
       <!-- Cross-field error -->
@@ -74,13 +95,19 @@
         Passwords do not match.
       </div>
 
+      <!-- API error -->
+      <div *ngIf="errorMessage" class="md:col-span-2 text-xs text-red-500">
+        {{ errorMessage }}
+      </div>
+
       <!-- Submit -->
       <div class="md:col-span-2">
         <button
           type="submit"
-          class="w-full rounded-lg bg-indigo-600 text-white py-2 text-sm font-medium hover:bg-indigo-700"
+          [disabled]="registerForm.invalid || isSubmitting"
+          class="w-full rounded-lg bg-indigo-600 text-white py-2 text-sm font-medium hover:bg-indigo-700 disabled:opacity-60"
         >
-          Sign up
+          {{ isSubmitting ? 'Creating account...' : 'Sign up' }}
         </button>
       </div>
     </form>

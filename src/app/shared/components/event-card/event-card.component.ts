@@ -22,8 +22,7 @@ export class EventCardComponent {
 
   @Output() register: EventEmitter<number> = new EventEmitter<number>();
 
-  onRegister(event:any): void {
-    event.stopPropagation();
+  onRegister(): void {
     this.register.emit(this.event.id);
   }
 }

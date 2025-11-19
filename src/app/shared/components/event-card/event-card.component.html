@@ -26,7 +26,7 @@
       </span>
     <button
       *ngIf="showRegisterButton && !isRegistered"
-      (click)="onRegister($event)"
+      (mouseup)="onRegister(); $event.stopPropagation()"
       [disabled]="remainingSeats === 0"
       class="px-3 py-1 text-sm rounded-lg text-sm text-white
          bg-indigo-600 hover:bg-indigo-700
@@ -34,7 +34,6 @@
     >
       {{ remainingSeats === 0 ? 'Full' : 'Register' }}
     </button>
-
 
     <!-- Slot for extra actions (e.g. "Cancel registration") -->
     <ng-content></ng-content>
