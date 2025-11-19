@@ -7,4 +7,5 @@ export interface CreateEventDto {
   capacity: number;
 }
 
-export interface UpdateEventDto extends Partial<CreateEventDto> {}
+export interface UpdateEventDto extends Partial<CreateEventDto> {
+}

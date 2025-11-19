@@ -11,8 +11,10 @@ export interface RegisterDto {
   lastName: string;
 }
 
-export interface AuthResponseDto {
-  token: string;
+export interface AuthStorage {
   userId: number;
+  email: string;
   role: 'ADMIN' | 'USER';
+  token: string;
 }
+
