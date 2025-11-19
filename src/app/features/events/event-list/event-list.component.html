@@ -1,0 +1,38 @@
+<script src="event-list.component.ts"></script>
+<div class="max-w-6xl mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-800">Upcoming events</h1>
+      <p class="text-sm text-slate-500">
+        Discover and register to events organized by the community.
+      </p>
+    </div>
+    <div *ngIf="userRole === 'ADMIN'">
+      <a
+        routerLink="/events/new"
+        class="inline-flex items-center rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700"
+      >
+        + Create event
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center text-slate-500">
+    Loading events...
+  </div>
+
+  <div *ngIf="errorMessage" class="text-center text-red-500">
+    {{ errorMessage }}
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-2" *ngIf="!isLoading && !errorMessage">
+    <app-event-card
+      *ngFor="let event of events"
+      [event]="event"
+      [remainingSeats]="getRemainingSeats(event)"
+      [isRegistered]="isEventRegistered(event)"
+      (register)="onRegister($event)"
+      (mouseup)="onClickDetail(event.id)"
+    ></app-event-card>
+  </div>
+</div>

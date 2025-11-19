@@ -1,0 +1,42 @@
+<div
+  appHighlightUpcoming
+  [appHighlightUpcomingEvent]="event"
+  class="rounded-xl shadow-md p-4 bg-white hover:shadow-lg transition flex flex-col gap-2 hover:cursor-pointer"
+>
+  <h3 class="text-xl font-semibold text-slate-800">
+    {{ event.title }}
+  </h3>
+  <p class="text-sm text-slate-500">
+    {{ event.location }} • {{ event.startDate | date: 'medium' }}
+  </p>
+  <p class="text-sm text-slate-600 line-clamp-2">
+    {{ event.description }}
+  </p>
+
+  <div class="flex items-center justify-between mt-2">
+    <span class="text-xs px-2 py-1 rounded-full bg-slate-100">
+      {{ event | eventStatus }}
+    </span>
+
+    <span *ngIf="remainingSeats !== null">
+        {{ remainingSeats }} / {{ event.capacity }} seats left
+      </span>
+    <span *ngIf="isRegistered" class="mt-1 text-emerald-600 font-medium">
+        You are registered
+      </span>
+    <button
+      *ngIf="showRegisterButton && !isRegistered"
+      (click)="onRegister($event)"
+      [disabled]="remainingSeats === 0"
+      class="px-3 py-1 text-sm rounded-lg text-sm text-white
+         bg-indigo-600 hover:bg-indigo-700
+         disabled:bg-slate-400 disabled:cursor-not-allowed"
+    >
+      {{ remainingSeats === 0 ? 'Full' : 'Register' }}
+    </button>
+
+
+    <!-- Slot for extra actions (e.g. "Cancel registration") -->
+    <ng-content></ng-content>
+  </div>
+</div>
