@@ -1,0 +1,39 @@
+<div class="max-w-5xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold text-slate-800 mb-4">
+    My registrations
+  </h1>
+
+  <p class="text-sm text-slate-500 mb-6">
+    All events you have registered for.
+  </p>
+
+  <div *ngIf="isLoading" class="text-center text-slate-500">
+    Loading your registrations...
+  </div>
+
+  <div *ngIf="errorMessage" class="text-center text-red-500">
+    {{ errorMessage }}
+  </div>
+
+  <div
+    *ngIf="!isLoading && !errorMessage && registrationsWithEvents.length === 0"
+    class="text-sm text-slate-500"
+  >
+    You have not registered for any event yet.
+  </div>
+
+  <div class="grid gap-4 md:grid-cols-2" *ngIf="registrationsWithEvents.length > 0">
+    <app-event-card
+      *ngFor="let item of registrationsWithEvents"
+      [event]="item.event"
+      [showRegisterButton]="false"
+    >
+      <button
+        class="ml-2 text-xs px-2 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600"
+        (click)="onCancelRegistration(item.registration.id)"
+      >
+        Cancel
+      </button>
+    </app-event-card>
+  </div>
+</div>
