@@ -20,11 +20,7 @@
     Loading events...
   </div>
 
-  <div *ngIf="errorMessage" class="text-center text-red-500">
-    {{ errorMessage }}
-  </div>
-
-  <div class="grid gap-4 md:grid-cols-2" *ngIf="!isLoading && !errorMessage">
+  <div class="grid gap-4 md:grid-cols-2" *ngIf="!isLoading">
     <app-event-card
       *ngFor="let event of events"
       [event]="event"

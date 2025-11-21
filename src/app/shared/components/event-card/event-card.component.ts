@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Event } from '../../../core/models/event.model';
-import { DatePipe, NgIf } from '@angular/common';
-import { EventStatusPipe } from '../../pipes/event-status.pipe';
-import { HighlightUpcomingDirective } from '../../directives/highlight-upcoming.directive';
+import {Component, EventEmitter, Input, Output, LOCALE_ID} from '@angular/core';
+import {Event} from '../../../core/models/event.model';
+import {DatePipe, NgIf} from '@angular/common';
+import {EventStatusPipe} from '../../pipes/event-status.pipe';
+import {HighlightUpcomingDirective} from '../../directives/highlight-upcoming.directive';
 
 @Component({
   selector: 'app-event-card',
@@ -12,7 +12,11 @@ import { HighlightUpcomingDirective } from '../../directives/highlight-upcoming.
     HighlightUpcomingDirective,
     NgIf
   ],
-  templateUrl: './event-card.component.html'
+  templateUrl: './event-card.component.html',
+  providers: [
+    DatePipe,
+    {provide: LOCALE_ID, useValue: 'fr-FR'}
+  ]
 })
 export class EventCardComponent {
   @Input() event!: Event;

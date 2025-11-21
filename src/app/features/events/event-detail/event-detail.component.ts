@@ -1,30 +1,34 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import { EventsService } from '../../../core/services/events/events.service';
-import { Event } from '../../../core/models/event.model';
-import { EventStatusPipe } from '../../../shared/pipes/event-status.pipe';
-import { DatePipe, NgIf } from '@angular/common';
-import { AuthService } from '../../../core/services/auth/auth.service';
-import { UserRole } from '../../../core/models/user.model';
-import { Registration } from '../../../core/models/registration.model';
+import {EventsService} from '../../../core/services/events/events.service';
+import {Event} from '../../../core/models/event.model';
+import {EventStatusPipe} from '../../../shared/pipes/event-status.pipe';
+import {DatePipe, NgIf} from '@angular/common';
+import {AuthService} from '../../../core/services/auth/auth.service';
+import {UserRole} from '../../../core/models/user.model';
+import {NotificationService} from '../../../core/services/notification/notification.service';
+import {Subject, takeUntil} from 'rxjs';
 
 @Component({
   selector: 'app-event-detail',
   imports: [EventStatusPipe, DatePipe, NgIf, RouterLink],
   templateUrl: './event-detail.component.html'
 })
-export class EventDetailComponent implements OnInit {
+export class EventDetailComponent implements OnInit, OnDestroy {
   event: Event | null = null;
   isLoading = false;
   errorMessage: string | null = null;
   canManage = false;
   remainingSeats: number | null = null;
 
+  private readonly destroy$ = new Subject<void>();
+
   constructor(
     private readonly route: ActivatedRoute,
     private readonly eventsService: EventsService,
     private readonly authService: AuthService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -51,16 +55,23 @@ export class EventDetailComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   private loadRemainingSeats(event: Event): void {
-    this.eventsService.getRegistrationsByEvent(event.id).subscribe({
-      next: (registrations: Registration[]): void => {
-        const registered: number = registrations.length;
-        this.remainingSeats = Math.max(event.capacity - registered, 0);
-      },
-      error: (): void => {
-        this.remainingSeats = null;
-      }
-    });
+    this.eventsService.getRemainingSeatsForEvent(event)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (remaining: number): void => {
+          this.remainingSeats = remaining;
+        },
+        error: (): void => {
+          this.remainingSeats = null;
+          this.notificationService.showError('Could not load remaining seats.');
+        }
+      });
   }
 
   private updateCanManage(): void {
@@ -89,13 +100,16 @@ export class EventDetailComponent implements OnInit {
       return;
     }
 
-    this.eventsService.deleteEvent(this.event.id).subscribe({
-      next: () => {
-        void this.router.navigate(['/events']);
-      },
-      error: () => {
-        this.errorMessage = 'Could not delete event.';
-      }
-    });
+    this.eventsService.deleteEvent(this.event.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.notificationService.showSuccess('Event deleted.');
+          void this.router.navigate(['/events']);
+        },
+        error: () => {
+          this.notificationService.showError('Could not delete event.');
+        }
+      });
   }
 }

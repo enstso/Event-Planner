@@ -9,9 +9,10 @@ import { EventsService } from '../../../core/services/events/events.service';
 import { CreateEventDto, UpdateEventDto } from '../../../core/dto/event.dto';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { eventDateRangeValidator } from '../validators/event-date-range.validator';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { Event } from '../../../core/models/event.model';
+import { NotificationService} from '../../../core/services/notification/notification.service';
 
 @Component({
   selector: 'app-event-form',
@@ -28,7 +29,8 @@ export class EventFormComponent implements OnInit {
     private readonly eventsService: EventsService,
     private readonly authService: AuthService,
     private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly notificationService: NotificationService
   ) {
     this.eventForm = this.fb.group(
       {
@@ -51,33 +53,41 @@ export class EventFormComponent implements OnInit {
       this.isEditMode = true;
       this.eventId = Number(idParam);
 
-      this.eventsService.getEventById(this.eventId).subscribe((event: Event) => {
-        this.eventForm.patchValue({
-          title: event.title,
-          description: event.description,
-          location: event.location,
-          startDate: event.startDate.slice(0, 16), // for datetime-local
-          endDate: event.endDate.slice(0, 16),
-          capacity: event.capacity
-        });
+      this.eventsService.getEventById(this.eventId).subscribe({
+        next: (event: Event) => {
+          this.eventForm.patchValue({
+            title: event.title,
+            description: event.description,
+            location: event.location,
+            startDate: event.startDate.slice(0, 16), // for datetime-local
+            endDate: event.endDate.slice(0, 16),
+            capacity: event.capacity
+          });
+        },
+        error: () => {
+          this.notificationService.showError('Could not load event.');
+          void this.router.navigate(['/events']);
+        }
       });
     }
   }
 
   onSubmit(): void {
     if (this.eventForm.invalid) {
+      this.notificationService.showError('Please fill in all required fields.');
       this.eventForm.markAllAsTouched();
       return;
     }
 
     const organizerId: number | null = this.authService.getCurrentUserId();
     if (organizerId === null) {
+      this.notificationService.showError('You must be logged in to manage events.');
+      void this.router.navigate(['/auth/login']);
       return;
     }
 
     const formValue = this.eventForm.value;
 
-    // convert back to ISO string
     const dtoBase: CreateEventDto = {
       title: formValue.title,
       description: formValue.description,
@@ -89,14 +99,26 @@ export class EventFormComponent implements OnInit {
 
     if (this.isEditMode && this.eventId !== null) {
       const updateDto: UpdateEventDto = dtoBase;
-      this.eventsService.updateEvent(this.eventId, updateDto).subscribe(() => {
-        void this.router.navigate(['/events', this.eventId]);
+      this.eventsService.updateEvent(this.eventId, updateDto).subscribe({
+        next: () => {
+          this.notificationService.showSuccess('Event updated.');
+          void this.router.navigate(['/events', this.eventId]);
+        },
+        error: () => {
+          this.notificationService.showError('Could not update event.');
+        }
       });
       return;
     }
 
-    this.eventsService.createEvent(dtoBase, organizerId).subscribe((event: Event) => {
-      void this.router.navigate(['/events', event.id]);
+    this.eventsService.createEvent(dtoBase, organizerId).subscribe({
+      next: (event: Event) => {
+        this.notificationService.showSuccess('Event created.');
+        void this.router.navigate(['/events', event.id]);
+      },
+      error: () => {
+        this.notificationService.showError('Could not create event.');
+      }
     });
   }
 }
