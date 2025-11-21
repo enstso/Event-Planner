@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
-import { AuthService } from '../../../core/services/auth/auth.service';
-import { LoginDto } from '../../../core/dto/auth.dto';
-import { User } from '../../../core/models/user.model';
+import {AuthService} from '../../../core/services/auth/auth.service';
+import {LoginDto} from '../../../core/dto/auth.dto';
+import {User} from '../../../core/models/user.model';
 import {NgIf} from '@angular/common';
 
 @Component({
