@@ -1,12 +1,15 @@
 <header class="bg-white shadow-sm">
   <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+
+    <!-- Logo / Home button -->
     <a routerLink="/events" class="text-xl font-bold text-indigo-600">
       Event Planner
     </a>
 
+    <!-- Top navigation bar -->
     <nav class="flex items-center gap-4 text-sm text-slate-700">
 
-      <!-- Visible if authenticated -->
+      <!-- Link visible only for authenticated users -->
       <a
         *ngIf="isAuthenticated | async"
         routerLink="/events"
@@ -16,6 +19,7 @@
         Events
       </a>
 
+      <!-- User's registrations link (only when logged in) -->
       <a
         *ngIf="isAuthenticated | async"
         routerLink="/events/my-registrations"
@@ -24,7 +28,7 @@
         My Registrations
       </a>
 
-      <!-- ADMIN -->
+      <!-- Admin-only link to create a new event -->
       <a
         *ngIf="(isAuthenticated | async) && (userRole | async) === 'ADMIN'"
         routerLink="/events/new"
@@ -33,7 +37,7 @@
         Create Event
       </a>
 
-      <!-- Email utilisateur connecté -->
+      <!-- Logged-in user's email displayed in the navbar -->
       <span
         *ngIf="isAuthenticated | async"
         class="text-xs text-slate-500 border border-slate-200 rounded-lg px-2 py-1"
@@ -41,7 +45,7 @@
         {{ userEmail | async }}
       </span>
 
-      <!-- Auth -->
+      <!-- Login button visible ONLY when user is NOT authenticated -->
       <a
         *ngIf="!(isAuthenticated | async)"
         routerLink="/auth/login"
@@ -50,6 +54,7 @@
         Login
       </a>
 
+      <!-- Logout button visible ONLY when user is authenticated -->
       <button
         *ngIf="isAuthenticated | async"
         class="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg"

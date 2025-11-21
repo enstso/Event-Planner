@@ -1,33 +1,51 @@
-<script src="event-card.component.ts"></script>
 <div
   appHighlightUpcoming
   [appHighlightUpcomingEvent]="event"
   class="rounded-xl shadow-md p-4 bg-white hover:shadow-lg transition flex flex-col gap-2 hover:cursor-pointer"
 >
+  <!-- Event title -->
   <h3 class="text-xl font-semibold text-slate-800">
     {{ event.title }}
   </h3>
+
+  <!-- Event location -->
   <p class="text-sm text-slate-500">
     {{ event.location }}
   </p>
+
+  <!-- Event date range (formatted using Angular date pipe) -->
   <p class="text-sm text-slate-500">
     {{ event.startDate | date: 'medium' }} - {{ event.endDate | date: 'medium' }}
   </p>
+
+  <!-- Short preview of the event description -->
   <p class="text-sm text-slate-600 line-clamp-2">
     {{ event.description }}
   </p>
 
+  <!-- Footer section: status, availability, and register button -->
   <div class="flex items-center justify-between mt-2">
+
+    <!-- Custom pipe showing event status: Upcoming / Ongoing / Finished -->
     <span class="text-xs px-2 py-1 rounded-full bg-slate-100">
       {{ event | eventStatus }}
     </span>
 
+    <!-- Seats left (only shown when computed) -->
     <span *ngIf="remainingSeats !== null">
         {{ remainingSeats }} / {{ event.capacity }} seats left
-      </span>
+    </span>
+
+    <!-- Displayed only if the user is already registered -->
     <span *ngIf="isRegistered" class="mt-1 text-emerald-600 font-medium">
         You are registered
-      </span>
+    </span>
+
+    <!-- Register button -->
+    <!-- Visible only if:
+         - showRegisterButton is true
+         - the user is NOT already registered
+         - event is NOT finished -->
     <button
       *ngIf="showRegisterButton && !isRegistered && (event | eventStatus) !== 'Finished'"
       (mouseup)="onRegister(); $event.stopPropagation()"
@@ -36,10 +54,12 @@
          bg-indigo-600 hover:bg-indigo-700
          disabled:bg-slate-400 disabled:cursor-not-allowed"
     >
+      <!-- Dynamically change button label depending on seats availability -->
       {{ remainingSeats === 0 ? 'Full' : 'Register' }}
     </button>
 
-    <!-- Slot for extra actions (e.g. "Cancel registration") -->
+    <!-- Content projection: allows parent components to inject custom actions -->
+    <!-- For example, "Cancel registration" button in MyRegistrationsComponent -->
     <ng-content></ng-content>
   </div>
 </div>

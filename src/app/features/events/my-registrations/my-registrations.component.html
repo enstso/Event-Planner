@@ -1,20 +1,25 @@
 <div class="max-w-5xl mx-auto px-4 py-8">
+  <!-- Page header -->
   <h1 class="text-3xl font-bold text-slate-800 mb-4">
     My registrations
   </h1>
 
+  <!-- Short descriptive subtitle -->
   <p class="text-sm text-slate-500 mb-6">
     All events you have registered for.
   </p>
 
+  <!-- Loading indicator shown while fetching registrations -->
   <div *ngIf="isLoading" class="text-center text-slate-500">
     Loading your registrations...
   </div>
 
+  <!-- Error message if loading fails -->
   <div *ngIf="errorMessage" class="text-center text-red-500">
     {{ errorMessage }}
   </div>
 
+  <!-- Message shown when the user has no registrations -->
   <div
     *ngIf="!isLoading && !errorMessage && registrationsWithEvents.length === 0"
     class="text-sm text-slate-500"
@@ -22,12 +27,16 @@
     You have not registered for any event yet.
   </div>
 
+  <!-- Grid of event cards for each registration -->
   <div class="grid gap-4 md:grid-cols-2" *ngIf="registrationsWithEvents.length > 0">
+    <!-- Loop through the list of { event, registration } objects -->
     <app-event-card
       *ngFor="let item of registrationsWithEvents"
       [event]="item.event"
       [showRegisterButton]="false"
     >
+      <!-- Action added inside the app-event-card using content projection -->
+      <!-- Cancel registration button -->
       <button
         class="ml-2 text-xs px-2 py-1 rounded-lg bg-red-500 text-white hover:bg-red-600"
         (click)="onCancelRegistration(item.registration.id)"

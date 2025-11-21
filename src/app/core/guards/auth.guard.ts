@@ -10,13 +10,19 @@ export class AuthGuard implements CanActivate {
     private readonly router: Router
   ) {}
 
+  // This guard runs before accessing protected routes.
+  // It checks whether the user is authenticated.
   canActivate(): Observable<boolean> {
     return this.authService.isAuthenticated$.pipe(
+      // Transform the authentication state into a boolean route permission.
       map((isAuthenticated: boolean) => {
+        // If the user is NOT authenticated, redirect them to the login page.
         if (!isAuthenticated) {
           void this.router.navigate(['/auth/login']);
-          return false;
+          return false; // Prevent navigation.
         }
+
+        // If authenticated, allow access to the route.
         return true;
       })
     );

@@ -1,24 +1,44 @@
 <div class="min-h-screen bg-slate-100 flex flex-col">
+  <!-- Global header displayed on all pages -->
   <app-header></app-header>
+
+  <!-- Notification container (toast messages) -->
+  <!--
+    * Displays only when notification$ emits a value.
+    * Positioned at the top center of the screen (below the header).
+    * Auto-hides after 3 seconds (handled by NotificationService).
+  -->
   <div
     *ngIf="notification$ | async as notification"
     class="fixed top-16 inset-x-0 flex justify-center z-50"
   >
+    <!-- Notification box -->
+    <!--
+      * Dynamic styling depending on "error" or "success".
+      * Shows short messages like "Event created." or "Could not load events."
+    -->
     <div
       class="px-4 py-2 rounded-lg shadow-sm border text-sm"
       [ngClass]="{
         'bg-red-100 text-red-800 border-red-300': notification.type === 'error',
         'bg-green-100 text-green-800 border-green-300': notification.type === 'success',
-        'bg-blue-100 text-blue-800 border-blue-300': notification.type === 'info'
       }"
     >
       {{ notification.message }}
     </div>
   </div>
+
+  <!-- Main content injected by Angular router -->
+  <!--
+    * All feature pages (events, login, register, details, etc.)
+    * Are displayed inside <router-outlet>.
+    * Header and footer stay static.
+  -->
   <main class="flex-1">
     <router-outlet></router-outlet>
   </main>
 
+  <!-- Global application footer -->
   <footer class="bg-slate-900 text-slate-400 text-xs py-4 text-center">
     Event Planner • Angular • Tailwind • JSON Server
   </footer>

@@ -1,11 +1,17 @@
 <div class="max-w-6xl mx-auto px-4 py-8">
+  <!-- Page header: title + subtitle + (admin-only) create button -->
   <div class="flex items-center justify-between mb-6">
     <div>
+      <!-- Page title -->
       <h1 class="text-3xl font-bold text-slate-800">Upcoming events</h1>
+
+      <!-- Small description below the title -->
       <p class="text-sm text-slate-500">
         Discover and register to events organized by the community.
       </p>
     </div>
+
+    <!-- "Create event" button is shown only if the user is an admin -->
     <div *ngIf="userRole === 'ADMIN'">
       <a
         routerLink="/events/new"
@@ -16,11 +22,13 @@
     </div>
   </div>
 
+  <!-- Events grid displayed once loading is finished -->
   <div *ngIf="isLoading" class="text-center text-slate-500">
     Loading events...
   </div>
 
   <div class="grid gap-4 md:grid-cols-2" *ngIf="!isLoading">
+    <!-- Loop through the event list and render each card -->
     <app-event-card
       *ngFor="let event of events"
       [event]="event"

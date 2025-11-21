@@ -1,11 +1,18 @@
+<!-- Main container centered vertically and horizontally -->
 <div class="flex items-center justify-center min-h-[calc(100vh-120px)] px-4">
   <div class="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
+
+    <!-- Page title -->
     <h1 class="text-2xl font-bold text-slate-800 mb-6 text-center">Sign in</h1>
 
+    <!-- Login form with reactive form binding -->
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
+
+      <!-- Email field -->
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">
           Email
+          <!-- Email input bound to formControl -->
           <input
             type="email"
             formControlName="email"
@@ -14,6 +21,7 @@
           />
         </label>
 
+        <!-- Email validation error -->
         <div
           *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
           class="text-xs text-red-500 mt-1"
@@ -22,9 +30,11 @@
         </div>
       </div>
 
+      <!-- Password field -->
       <div>
         <label class="block text-sm font-medium text-slate-700 mb-1">
           Password
+          <!-- Password input bound to formControl -->
           <input
             type="password"
             formControlName="password"
@@ -33,6 +43,7 @@
           />
         </label>
 
+        <!-- Password validation error -->
         <div
           *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
           class="text-xs text-red-500 mt-1"
@@ -41,10 +52,12 @@
         </div>
       </div>
 
+      <!-- Error message displayed if login fails -->
       <div *ngIf="errorMessage" class="text-sm text-red-600">
         {{ errorMessage }}
       </div>
 
+      <!-- Submit button, disabled during submission -->
       <button
         type="submit"
         [disabled]="isSubmitting"
@@ -54,6 +67,7 @@
       </button>
     </form>
 
+    <!-- Alternative navigation to registration -->
     <p class="text-xs text-slate-500 mt-4 text-center">
       Don’t have an account?
       <a routerLink="/auth/register" class="text-indigo-600 hover:underline">

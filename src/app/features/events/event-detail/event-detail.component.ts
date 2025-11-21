@@ -15,12 +15,16 @@ import {Subject, takeUntil} from 'rxjs';
   templateUrl: './event-detail.component.html'
 })
 export class EventDetailComponent implements OnInit, OnDestroy {
+  // Holds the currently loaded event
   event: Event | null = null;
+
+  // UI state flags
   isLoading = false;
   errorMessage: string | null = null;
-  canManage = false;
+  canManage = false; // true if the user can edit/delete the event
   remainingSeats: number | null = null;
 
+  // Used to automatically unsubscribe from streams on component destroy
   private readonly destroy$ = new Subject<void>();
 
   constructor(
@@ -32,20 +36,27 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Retrieve the "id" parameter from the route
     const idParam: string | null = this.route.snapshot.paramMap.get('id');
     const id: number = idParam ? Number(idParam) : NaN;
 
+    // Validate the ID format
     if (Number.isNaN(id)) {
       this.errorMessage = 'Invalid event id.';
       return;
     }
 
+    // Load event from API
     this.isLoading = true;
     this.eventsService.getEventById(id).subscribe({
       next: (event: Event) => {
         this.event = event;
         this.isLoading = false;
+
+        // Determine if current user can manage this event
         this.updateCanManage();
+
+        // Load remaining seats for this event
         this.loadRemainingSeats(event);
       },
       error: () => {
@@ -56,11 +67,13 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Emit completion and close the subject to cancel all subscriptions
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   private loadRemainingSeats(event: Event): void {
+    // Load remaining seats for the given event
     this.eventsService.getRemainingSeatsForEvent(event)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -68,6 +81,7 @@ export class EventDetailComponent implements OnInit, OnDestroy {
           this.remainingSeats = remaining;
         },
         error: (): void => {
+          // Null means unknown/failed state
           this.remainingSeats = null;
           this.notificationService.showError('Could not load remaining seats.');
         }
@@ -75,20 +89,24 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   }
 
   private updateCanManage(): void {
+    // If event is not loaded, user can't manage anything
     if (this.event === null) {
       this.canManage = false;
       return;
     }
 
+    // Get the current user identity
     const currentUserId: number | null = this.authService.getCurrentUserId();
     const role: UserRole | null = this.authService.getCurrentUserRole();
 
+    // Admins or event organizers can manage the event
     this.canManage =
       role === 'ADMIN' ||
       (currentUserId !== null && this.event.organizerId === currentUserId);
   }
 
   onEdit(): void {
+    // Navigate to edit page only if the event is loaded
     if (!this.event) {
       return;
     }
@@ -96,18 +114,22 @@ export class EventDetailComponent implements OnInit, OnDestroy {
   }
 
   onDelete(): void {
+    // Safety guard
     if (!this.event) {
       return;
     }
 
+    // Delete event from backend
     this.eventsService.deleteEvent(this.event.id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
+          // Show success, then navigate back to events list
           this.notificationService.showSuccess('Event deleted.');
           void this.router.navigate(['/events']);
         },
         error: () => {
+          // Notify error
           this.notificationService.showError('Could not delete event.');
         }
       });
