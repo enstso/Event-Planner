@@ -4,7 +4,7 @@ Event Planner is a full Angular application built **from scratch** as a final pr
 It allows authenticated users to browse upcoming events, register for them, and manage their own registrations.
 Admins can create, edit, and delete events.
 
-The project follows **SOLID principles**, uses **standalone components**, and includes **custom pipes, directives, validators, authentication, routing, reactive forms, services, and HTTP interactions**.
+The project follows **SOLID principles**, uses **standalone components**, and includes custom pipes, directives, validators, authentication, routing, reactive forms, services, and full HTTP interactions.
 
 ---
 
@@ -22,42 +22,43 @@ The project follows **SOLID principles**, uses **standalone components**, and in
 
 * List of upcoming events
 * Event detail page
-* Create and edit an event (Admin only)
+* Create & edit events (ADMIN only)
 * Remaining seats calculation
-* Automatic UI update on registration
+* Prevent double registration
 * Highlight events happening soon (custom directive)
 
 ### 🧾 Registrations
 
 * Register to an event
-* Prevent double registration
 * Cancel registration
 * View all your registrations
+* Real-time UI updates
 
 ### 🎨 UI & UX
 
 * Responsive layout with **TailwindCSS**
 * Clean event cards
-* Header showing user email and role
+* Header showing user email & role
 * Notification system auto-closing after 3 seconds
 
-### 🧰 Angular Requirements (As per assignment)
+### 🧰 Angular Assignment Requirements
 
-* ✔ Authentication (login + register)
-* ✔ Routing (multiple routes, route params)
-* ✔ Components (with Input + Output + reused components)
-* ✔ Services (more than 2)
-* ✔ HTTP communication (JSON Server)
-* ✔ Reactive Forms (with custom validator)
-* ✔ Custom pipe (`eventStatus`)
-* ✔ Custom directive (`highlightUpcoming`)
-* ✔ SOLID-compliant architecture
+* ✔ Authentication
+* ✔ Routing (with params)
+* ✔ Standalone components
+* ✔ Inputs/Outputs
+* ✔ Services
+* ✔ HTTP (JSON Server)
+* ✔ Reactive Forms + Custom Validators
+* ✔ Custom Pipe (`eventStatus`)
+* ✔ Custom Directive (`highlightUpcoming`)
+* ✔ Organized & SOLID architecture
 
 ---
 
 ## 🗂 Project Structure
 
-```txt
+```
 src/
  ├── app/
  │   ├── core/
@@ -75,15 +76,15 @@ src/
  │   │    ├── pipes/
  │   ├── app.routes.ts
  │   ├── app.config.ts
-````
+```
 
 ---
 
-## 🧭 Routing
+# 🧭 Routing
 
-The application uses **lazy-loaded feature modules** and guards to protect and structure the routes.
+The app uses **lazy-loaded modules** and guards to protect sensitive routes.
 
-### 🔝 Top-level routes (`app.routes.ts`)
+## 🔝 Top-level routes (`app.routes.ts`)
 
 ```ts
 export const routes: Routes = [
@@ -96,30 +97,23 @@ export const routes: Routes = [
     path: 'events',
     loadChildren: () =>
       import('./features/events/events.module').then(m => m.EventsModule),
-    canActivate: [AuthGuard] // user must be authenticated
+    canActivate: [AuthGuard]
   },
-  {
-    path: '',
-    redirectTo: 'events',
-    pathMatch: 'full'
-  },
-  {
-    path: '**',
-    redirectTo: 'events'
-  }
+  { path: '', redirectTo: 'events', pathMatch: 'full' },
+  { path: '**', redirectTo: 'events' }
 ];
 ```
 
 **Explanation:**
 
-* `/auth/**` → lazy-loads the **AuthModule** (public routes).
-* `/events/**` → lazy-loads the **EventsModule**, protected by `AuthGuard` → only authenticated users can access events.
-* `/` → redirects to `/events`.
-* Any unknown route (`**`) → redirects to `/events`.
+* `/auth/**` → Public routes (login, register)
+* `/events/**` → Protected by `AuthGuard`
+* `/events/new` and `/events/:id/edit` → ADMIN only via `RoleGuard`
+* Default redirect to `/events`
 
 ---
 
-### 🔐 Auth routes (`AuthRoutingModule`)
+## 🔐 Auth routes (`AuthRoutingModule`)
 
 ```ts
 const routes: Routes = [
@@ -128,18 +122,9 @@ const routes: Routes = [
 ];
 ```
 
-**Main routes:**
-
-* `/auth/login`
-  → Login page with email/password + reactive form + validation.
-
-* `/auth/register`
-  → Registration page (first name, last name, email, password, confirm password)
-  → Uses custom validator `passwordMatchValidator`.
-
 ---
 
-### 📅 Event routes (`EventsRoutingModule`)
+## 📅 Event routes (`EventsRoutingModule`)
 
 ```ts
 const routes: Routes = [
@@ -161,132 +146,90 @@ const routes: Routes = [
 ];
 ```
 
-**Main routes:**
-
-* `/events`
-  → **EventListComponent**
-  → Shows all upcoming events in a card layout.
-  → Displays remaining seats, status (`Upcoming / Ongoing / Finished`), and a “Register” button.
-
-* `/events/my-registrations`
-  → **MyRegistrationsComponent**
-  → Shows all events the currently logged-in user is registered to.
-  → Allows cancelling a registration.
-
-* `/events/new`
-  → **EventFormComponent** in **create mode**.
-  → Protected by `RoleGuard` with `data: { roles: ['ADMIN'] }`.
-  → Only admins can create new events.
-
-* `/events/:id/edit`
-  → **EventFormComponent** in **edit mode**.
-  → Also protected by `RoleGuard` (admin only).
-  → Loads event data, allows editing and saving changes.
-
-* `/events/:id`
-  → **EventDetailComponent**
-  → Displays full details of a single event.
-  → Shows capacity and remaining seats, status, and admin-only management buttons (`Edit`, `Delete`).
-
-**Guards used:**
-
-* `AuthGuard` (top-level on `/events`)
-  → Redirects unauthenticated users to `/auth/login`.
-
-* `RoleGuard` (on `/events/new` and `/events/:id/edit`)
-  → Reads `data.roles` and checks the current user role (`ADMIN` / `USER`).
-  → If role is not allowed, redirects to `/events`.
-
 ---
 
-## 🧪 Technologies Used
+# 🗄 JSON Server
 
-| Technology                | Role                        |
-| ------------------------- | --------------------------- |
-| **Angular 17+**           | SPA framework               |
-| **Standalone Components** | Modern Angular architecture |
-| **TailwindCSS**           | Styling                     |
-| **JSON Server**           | Fake REST API backend       |
-| **RxJS**                  | Reactive patterns           |
-| **TypeScript**            | Strong typings              |
-| **SOLID principles**      | Architecture                |
-
----
-
-## 📦 Installation
-
-### 1️⃣ Clone the repository
-
-```bash
-git clone https://github.com/enstso/Event-Planner
-cd event-planner
-```
-
-### 2️⃣ Install dependencies
-
-```bash
-npm install
-```
-
-### 3️⃣ Start JSON Server
-
-In a separate terminal:
+The project uses **JSON Server** as a fake backend.
+Start it with:
 
 ```bash
 npm run json-server
 ```
 
-This starts a mock backend at:
+Runs on:
 
 ```
 http://localhost:3000
 ```
 
-### 4️⃣ Start Angular
-
-```bash
-npm start
-```
-
-Or:
-
-```bash
-ng serve
-```
-
-Application will be available at:
-
-```
-http://localhost:4200
-```
-
-Or run both:
-
-```bash
-npm run dev
-```
-
----
-
-## 🗄 JSON Server Structure
-
-Example `db.json`:
+### Default `db.json` example (with working login accounts)
 
 ```json
 {
-  "users": [],
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@example.com",
+      "password": "Admin123!",
+      "firstName": "Admin",
+      "lastName": "User",
+      "role": "ADMIN"
+    },
+    {
+      "id": 2,
+      "email": "john@example.com",
+      "password": "User123",
+      "firstName": "John",
+      "lastName": "Doe",
+      "role": "USER"
+    }
+  ],
   "events": [],
   "registrations": []
 }
 ```
 
-Each collection is used by Angular’s `ApiService` for CRUD operations.
+---
+
+# 🔑 Test Accounts (Login Credentials)
+
+You can use these accounts immediately.
+
+## 👑 Admin Account
+
+| Field    | Value               |
+| -------- | ------------------- |
+| Email    | `admin@example.com` |
+| Password | `Admin123!`          |
+| Role     | ADMIN               |
+
+Permissions:
+✔ Create/Edit/Delete events
+✔ View/Manage events
+✔ Full access
 
 ---
 
-## 🔧 Environment Configuration
+## 👤 Standard User Account
 
-`src/environments/environment.ts`:
+| Field    | Value              |
+| -------- | ------------------ |
+| Email    | `john@example.com` |
+| Password | `User123`          |
+| Role     | USER               |
+
+Permissions:
+✔ View events
+✔ Register for events
+✔ Cancel registration
+✘ Cannot create/edit events
+
+---
+
+# 🛠 Environment Configuration
+
+`src/environments/environment.ts`
 
 ```ts
 export const environment = {
@@ -296,83 +239,176 @@ export const environment = {
 
 ---
 
-## 🛠 Key Angular Features Used
+# 🧪 Technologies Used
 
-### ✔ Custom Validator
-
-`passwordMatchValidator` and `eventDateRangeValidator`
-
-### ✔ Custom Pipe
-
-`eventStatus` — returns `Upcoming`, `Ongoing`, or `Finished`
-
-### ✔ Custom Directive
-
-`highlightUpcoming` — highlights events happening within 7 days
-
-### ✔ Input & Output
-
-`EventCardComponent` uses:
-
-* `@Input() event`
-* `@Input() remainingSeats`
-* `@Output() register`
-
-### ✔ Standalone Components
-
-Header, EventCard, EventDetail, EventForm, etc.
-
-### ✔ SOLID Architecture
-
-* `AuthService` handles only auth logic
-* `EventsService` handles only event + registration API
-* `NotificationService` handles all toast messages
-* Components stay dumb & UI-focused
+| Technology            | Description         |
+| --------------------- | ------------------- |
+| Angular 17+           | Framework           |
+| Standalone Components | Modern architecture |
+| TailwindCSS           | Styling             |
+| JSON Server           | Fake API            |
+| RxJS                  | Reactivity          |
+| TypeScript            | Strong typing       |
+| SOLID                 | Clean architecture  |
 
 ---
 
-## 🎉 Demo Features
+# 🛠 Key Angular Features Used
+
+### ✔ Custom Validators
+
+* `passwordMatchValidator`
+* `eventDateRangeValidator`
+
+---
+
+### ✔ Custom Pipe
+
+* `eventStatus` (returns *Upcoming*, *Ongoing*, or *Finished*)
+
+---
+
+### ✔ Custom Directive
+
+* `highlightUpcoming` (highlights events happening within 7 days)
+
+---
+
+### ✔ Standalone UI Components (Shared Components)
+
+These are reusable UI components used throughout the application.
+
+* `HeaderComponent` — App header displaying navigation + user info
+* `EventCardComponent` — Event preview card reused in several pages
+
+---
+
+### ✔ Feature Components (Auth)
+
+* `LoginComponent` — Login page with validation
+* `RegisterComponent` — Register page with custom password validator
+
+---
+
+### ✔ Feature Components (Events)
+
+* `EventListComponent` — Displays all events with status & register button
+* `EventDetailComponent` — Full event details, remaining seats, admin controls
+* `EventFormComponent` — Create/edit event (admin-only)
+* `MyRegistrationsComponent` — Shows events the user is registered to
+
+---
+
+### ✔ Services
+
+* `AuthService` — Authentication + local storage + user state
+* `EventsService` — CRUD + registration logic
+* `NotificationService` — Success/error messages auto-closing after 3s
+* `ApiService` — HTTP wrapper for GET/POST/PUT/DELETE
+
+---
+
+### ✔ Guards
+
+* `AuthGuard` — Protects `/events/**`
+* `RoleGuard` — Protects admin-only routes
+
+---
+
+### ✔ Interceptors
+
+* `authInterceptor` — Automatically attaches `Authorization: Bearer <token>`
+
+---
+
+# 📦 Installation
+
+## 1️⃣ Clone repository
+
+```bash
+git clone https://github.com/enstso/Event-Planner
+cd event-planner
+```
+
+## 2️⃣ Install dependencies
+
+```bash
+npm install
+```
+
+## 3️⃣ Start JSON Server
+
+```bash
+npm run json-server
+```
+
+## 4️⃣ Start Angular
+
+```bash
+npm start
+```
+
+App URL:
+
+```
+http://localhost:4200
+```
+
+## Or run both servers:
+
+```bash
+npm run dev
+```
+
+---
+
+# 🎉 Demo Features
 
 ### 👤 User
 
 * Login & logout
-* Register an account
-* See their email in the header
+* Register account
+* See email in header
 
-### 📝 Event Management
+### 📝 Admin
 
-* Admin can create, edit, delete events
-* Regular users cannot
+* Create new events
+* Edit events
+* Delete events
 
-### 🪑 Registration Logic
+### 🎫 Registration System
 
-* Accurate remaining seats
+* Register with seat tracking
 * Prevent multiple registrations
-* Disable register button when event is full
-* Hide register button if event is finished
+* Cancel registration
+* Real-time UI update
 
 ---
 
-## 🧹 Scripts
+# 🧹 Available Scripts
 
-| Script                | Description     |
-| --------------------- | --------------- |
-| `npm run start`       | Run Angular     |
-| `npm run json-server` | Run JSON Server |
-| `npm run dev`         | Run Both        |
-| `npm run build`       | Build project   |
-| `npm test`            | Run tests       |
+| Command               | Description           |
+| --------------------- | --------------------- |
+| `npm run start`       | Start Angular app     |
+| `npm run json-server` | Start JSON server     |
+| `npm run dev`         | Run both concurrently |
+| `npm run build`       | Production build      |
+| `npm test`            | Run tests             |
 
 ---
 
-## 🏁 Conclusion
+# 🏁 Conclusion
 
 This project demonstrates:
 
-* Solid Angular architecture
-* Proper use of modules & standalone components
-* Clean TypeScript & RxJS patterns
-* Reactive forms + validation
-* Realistic event/registration system
-* UI polish with Tailwind
+✔ Clean Angular architecture
 
+✔ Smart use of standalone components
+
+✔ Fully reactive services and HTTP interactions
+
+✔ Custom validators, pipes, directives
+
+✔ Realistic event management system
+
+✔ Professional UI with TailwindCSS
