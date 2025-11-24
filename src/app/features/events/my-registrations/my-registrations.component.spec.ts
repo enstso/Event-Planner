@@ -1,13 +1,19 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {MyRegistrationsComponent} from './my-registrations.component';
-import {EventsService} from '../../../core/services/events/events.service';
-import {AuthService} from '../../../core/services/auth/auth.service';
-import {NotificationService} from '../../../core/services/notification/notification.service';
-import {of, throwError} from 'rxjs';
-import {Registration} from '../../../core/models/registration.model';
-import {Event} from '../../../core/models/event.model';
-import {DatePipe} from '@angular/common';
-import {LOCALE_ID} from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MyRegistrationsComponent } from './my-registrations.component';
+import { EventsService } from '../../../core/services/events/events.service';
+import { AuthService } from '../../../core/services/auth/auth.service';
+import { NotificationService } from '../../../core/services/notification/notification.service';
+import { of, throwError } from 'rxjs';
+import { Registration } from '../../../core/models/registration.model';
+import { Event } from '../../../core/models/event.model';
+import { DatePipe, registerLocaleData } from '@angular/common';
+import { LOCALE_ID } from '@angular/core';
+import localeFr from '@angular/common/locales/fr';
+
+// ✅ Register French locale ONCE for all tests in this file
+beforeAll(() => {
+  registerLocaleData(localeFr, 'fr-FR');
+});
 
 describe('MyRegistrationsComponent', () => {
   let component: MyRegistrationsComponent;
@@ -18,8 +24,8 @@ describe('MyRegistrationsComponent', () => {
   let notificationServiceSpy: jasmine.SpyObj<NotificationService>;
 
   const mockRegistrations: Registration[] = [
-    {id: 1, userId: 42, eventId: 10, createdAt: '2025-01-01T10:00:00.000Z'},
-    {id: 2, userId: 42, eventId: 20, createdAt: '2025-01-02T10:00:00.000Z'}
+    { id: 1, userId: 42, eventId: 10, createdAt: '2025-01-01T10:00:00.000Z' },
+    { id: 2, userId: 42, eventId: 20, createdAt: '2025-01-02T10:00:00.000Z' }
   ];
 
   const mockEvents: Event[] = [
@@ -48,11 +54,7 @@ describe('MyRegistrationsComponent', () => {
   beforeEach(async () => {
     eventsServiceSpy = jasmine.createSpyObj<EventsService>(
       'EventsService',
-      [
-        'getRegistrationsByUser',
-        'getEventById',
-        'deleteRegistration'
-      ]
+      ['getRegistrationsByUser', 'getEventById', 'deleteRegistration']
     );
 
     authServiceSpy = jasmine.createSpyObj<AuthService>(
@@ -68,11 +70,11 @@ describe('MyRegistrationsComponent', () => {
     await TestBed.configureTestingModule({
       imports: [MyRegistrationsComponent], // standalone component
       providers: [
-        {provide: EventsService, useValue: eventsServiceSpy},
-        {provide: AuthService, useValue: authServiceSpy},
-        {provide: NotificationService, useValue: notificationServiceSpy},
+        { provide: EventsService, useValue: eventsServiceSpy },
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: NotificationService, useValue: notificationServiceSpy },
         DatePipe,
-        {provide: LOCALE_ID, useValue: 'fr-FR'}
+        { provide: LOCALE_ID, useValue: 'fr-FR' }
       ]
     }).compileComponents();
 
@@ -150,14 +152,8 @@ describe('MyRegistrationsComponent', () => {
   it('should cancel registration and update list on success', () => {
     // Start with some data
     component.registrationsWithEvents = [
-      {
-        registration: mockRegistrations[0],
-        event: mockEvents[0]
-      },
-      {
-        registration: mockRegistrations[1],
-        event: mockEvents[1]
-      }
+      { registration: mockRegistrations[0], event: mockEvents[0] },
+      { registration: mockRegistrations[1], event: mockEvents[1] }
     ];
 
     eventsServiceSpy.deleteRegistration.and.returnValue(of({}));
@@ -173,10 +169,7 @@ describe('MyRegistrationsComponent', () => {
 
   it('should show error when cancel registration fails', () => {
     component.registrationsWithEvents = [
-      {
-        registration: mockRegistrations[0],
-        event: mockEvents[0]
-      }
+      { registration: mockRegistrations[0], event: mockEvents[0] }
     ];
 
     eventsServiceSpy.deleteRegistration.and.returnValue(
