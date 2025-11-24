@@ -43,16 +43,16 @@ The project follows **SOLID principles**, uses **standalone components**, and in
 
 ### 🧰 Angular Assignment Requirements
 
-* ✔ Authentication
-* ✔ Routing (with params)
-* ✔ Standalone components
-* ✔ Inputs/Outputs
-* ✔ Services
-* ✔ HTTP (JSON Server)
-* ✔ Reactive Forms + Custom Validators
-* ✔ Custom Pipe (`eventStatus`)
-* ✔ Custom Directive (`highlightUpcoming`)
-* ✔ Organized & SOLID architecture
+✔ Authentication
+✔ Routing (with params)
+✔ Standalone components
+✔ Inputs/Outputs
+✔ Services
+✔ HTTP (JSON Server)
+✔ Reactive Forms + Custom Validators
+✔ Custom Pipe (`eventStatus`)
+✔ Custom Directive (`highlightUpcoming`)
+✔ Organized & SOLID architecture
 
 ---
 
@@ -104,16 +104,16 @@ export const routes: Routes = [
 ];
 ```
 
-**Explanation:**
+### Explanation
 
 * `/auth/**` → Public routes (login, register)
-* `/events/**` → Protected by `AuthGuard`
-* `/events/new` and `/events/:id/edit` → ADMIN only via `RoleGuard`
+* `/events/**` → Protected
+* `/events/new` & `/events/:id/edit` → ADMIN only via `RoleGuard`
 * Default redirect to `/events`
 
 ---
 
-## 🔐 Auth routes (`AuthRoutingModule`)
+## 🔐 Auth routes
 
 ```ts
 const routes: Routes = [
@@ -124,7 +124,7 @@ const routes: Routes = [
 
 ---
 
-## 📅 Event routes (`EventsRoutingModule`)
+## 📅 Event routes
 
 ```ts
 const routes: Routes = [
@@ -150,8 +150,7 @@ const routes: Routes = [
 
 # 🗄 JSON Server
 
-The project uses **JSON Server** as a fake backend.
-Start it with:
+Start backend:
 
 ```bash
 npm run json-server
@@ -163,7 +162,7 @@ Runs on:
 http://localhost:3000
 ```
 
-### Default `db.json` example (with working login accounts)
+### `db.json` Example
 
 ```json
 {
@@ -192,26 +191,19 @@ http://localhost:3000
 
 ---
 
-# 🔑 Test Accounts (Login Credentials)
-
-You can use these accounts immediately.
+# 🔑 Test Accounts
 
 ## 👑 Admin Account
 
 | Field    | Value               |
 | -------- | ------------------- |
 | Email    | `admin@example.com` |
-| Password | `Admin123!`          |
+| Password | `Admin123!`         |
 | Role     | ADMIN               |
-
-Permissions:
-✔ Create/Edit/Delete events
-✔ View/Manage events
-✔ Full access
 
 ---
 
-## 👤 Standard User Account
+## 👤 User Account
 
 | Field    | Value              |
 | -------- | ------------------ |
@@ -219,15 +211,9 @@ Permissions:
 | Password | `User123`          |
 | Role     | USER               |
 
-Permissions:
-✔ View events
-✔ Register for events
-✔ Cancel registration
-✘ Cannot create/edit events
-
 ---
 
-# 🛠 Environment Configuration
+# 🛠 Environment
 
 `src/environments/environment.ts`
 
@@ -241,120 +227,126 @@ export const environment = {
 
 # 🧪 Technologies Used
 
-| Technology            | Description         |
-| --------------------- | ------------------- |
-| Angular 17+           | Framework           |
-| Standalone Components | Modern architecture |
-| TailwindCSS           | Styling             |
-| JSON Server           | Fake API            |
-| RxJS                  | Reactivity          |
-| TypeScript            | Strong typing       |
-| SOLID                 | Clean architecture  |
+| Technology  | Purpose            |
+| ----------- | ------------------ |
+| Angular 17+ | Frontend framework |
+| TailwindCSS | Styling            |
+| JSON Server | Mock backend       |
+| RxJS        | Reactivity         |
+| SOLID       | Architecture       |
+| TypeScript  | Strong typing      |
 
 ---
 
-# 🛠 Key Angular Features Used
+# 🛠 Angular Features
 
 ### ✔ Custom Validators
 
 * `passwordMatchValidator`
 * `eventDateRangeValidator`
 
----
-
 ### ✔ Custom Pipe
 
-* `eventStatus` (returns *Upcoming*, *Ongoing*, or *Finished*)
-
----
+* `eventStatus`
 
 ### ✔ Custom Directive
 
-* `highlightUpcoming` (highlights events happening within 7 days)
+* `highlightUpcoming`
 
----
+### ✔ Standalone Components
 
-### ✔ Standalone UI Components (Shared Components)
+* `HeaderComponent`
+* `EventCardComponent`
 
-These are reusable UI components used throughout the application.
+### ✔ Feature Components
 
-* `HeaderComponent` — App header displaying navigation + user info
-* `EventCardComponent` — Event preview card reused in several pages
-
----
-
-### ✔ Feature Components (Auth)
-
-* `LoginComponent` — Login page with validation
-* `RegisterComponent` — Register page with custom password validator
-
----
-
-### ✔ Feature Components (Events)
-
-* `EventListComponent` — Displays all events with status & register button
-* `EventDetailComponent` — Full event details, remaining seats, admin controls
-* `EventFormComponent` — Create/edit event (admin-only)
-* `MyRegistrationsComponent` — Shows events the user is registered to
-
----
+Auth: Login, Register
+Events: List, Detail, Form, My Registrations
 
 ### ✔ Services
 
-* `AuthService` — Authentication + local storage + user state
-* `EventsService` — CRUD + registration logic
-* `NotificationService` — Success/error messages auto-closing after 3s
-* `ApiService` — HTTP wrapper for GET/POST/PUT/DELETE
-
----
+* AuthService
+* EventsService
+* NotificationService
+* ApiService
 
 ### ✔ Guards
 
-* `AuthGuard` — Protects `/events/**`
-* `RoleGuard` — Protects admin-only routes
-
----
+* AuthGuard
+* RoleGuard
 
 ### ✔ Interceptors
 
-* `authInterceptor` — Automatically attaches `Authorization: Bearer <token>`
+* authInterceptor
+
+---
+
+# 🤖 Continuous Integration (CI) — GitHub Actions
+
+This project includes a **CI pipeline** using GitHub Actions.
+
+## 🧪 What the CI Does
+
+| Step                 | Purpose                      |
+| -------------------- | ---------------------------- |
+| Checkout code        | Get repository               |
+| Setup Node           | Install Node 20 with caching |
+| Install dependencies | `npm ci`                     |
+| Run tests            | Headless Chrome              |
+| Build                | Production build             |
+
+Ensures PRs never break the app.
+
+---
+
+## 📄 CI Workflow (`.github/workflows/ci.yml`)
+
+```yaml
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test -- --watch=false --browsers=ChromeHeadless
+
+      - name: Build app
+        run: npm run build -- --configuration=production
+```
 
 ---
 
 # 📦 Installation
 
-## 1️⃣ Clone repository
-
 ```bash
 git clone https://github.com/enstso/Event-Planner
 cd event-planner
-```
-
-## 2️⃣ Install dependencies
-
-```bash
 npm install
-```
-
-## 3️⃣ Start JSON Server
-
-```bash
 npm run json-server
-```
-
-## 4️⃣ Start Angular
-
-```bash
 npm start
 ```
 
-App URL:
-
-```
-http://localhost:4200
-```
-
-## Or run both servers:
+Or both:
 
 ```bash
 npm run dev
@@ -364,36 +356,35 @@ npm run dev
 
 # 🎉 Demo Features
 
-### 👤 User
+### User
 
-* Login & logout
-* Register account
-* See email in header
+✔ Login
+✔ Register
+✔ See own registrations
 
-### 📝 Admin
+### Admin
 
-* Create new events
-* Edit events
-* Delete events
+✔ Create events
+✔ Edit events
+✔ Delete events
 
-### 🎫 Registration System
+### System
 
-* Register with seat tracking
-* Prevent multiple registrations
-* Cancel registration
-* Real-time UI update
+✔ Seat tracking
+✔ Prevent double registration
+✔ Real-time UI update
 
 ---
 
-# 🧹 Available Scripts
+# 🧹 Scripts
 
-| Command               | Description           |
-| --------------------- | --------------------- |
-| `npm run start`       | Start Angular app     |
-| `npm run json-server` | Start JSON server     |
-| `npm run dev`         | Run both concurrently |
-| `npm run build`       | Production build      |
-| `npm test`            | Run tests             |
+| Command               | Description   |
+| --------------------- | ------------- |
+| `npm start`           | Start Angular |
+| `npm run json-server` | Start backend |
+| `npm run dev`         | Start both    |
+| `npm test`            | Run tests     |
+| `npm run build`       | Build prod    |
 
 ---
 
@@ -403,12 +394,14 @@ This project demonstrates:
 
 ✔ Clean Angular architecture
 
-✔ Smart use of standalone components
+✔ Standalone components
 
-✔ Fully reactive services and HTTP interactions
+✔ Reactive HTTP services
 
 ✔ Custom validators, pipes, directives
 
 ✔ Realistic event management system
 
-✔ Professional UI with TailwindCSS
+✔ TailwindCSS
+
+✔ **Automated CI pipeline with GitHub Actions**
